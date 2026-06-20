@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="tr">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#050507" />
+        <meta name="description" content="Sikkolik: The New Era — tüm bölümler, IMDb tarzı puanlama ve sıralama." />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+        <link rel="stylesheet" href="./style.css" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <title>Bölümler &amp; Puanlar — Sikkolik | WextFlix</title>
+        <style>
+            /* ============================================================
+               Episodes Ranking Page — IMDb-inspired, WextFlix-themed
+            ============================================================ */
+            .eps-page { padding: 110px 64px 90px; min-height: 100vh; max-width: 1280px; margin: 0 auto; }
+            @media (max-width: 760px) { .eps-page { padding: 90px 18px 60px; } }
+
+            /* ---- Header ---- */
+            .eps-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 6px; flex-wrap: wrap; }
+            .eps-head-left .eps-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2.6px; text-transform: uppercase; color: var(--accent-soft); margin-bottom: 12px; }
+            .eps-head-left h1 { font-family: var(--font-display); font-style: italic; font-size: 42px; font-weight: 600; color: var(--text-0); letter-spacing: -0.6px; line-height: 1.05; }
+            .eps-head-left .eps-sub { color: var(--text-2); font-size: 14.5px; margin-top: 10px; max-width: 560px; line-height: 1.6; }
+            @media (max-width: 560px) { .eps-head-left h1 { font-size: 30px; } }
+
+            /* ---- Series score summary card ---- */
+            .eps-score-card { display: flex; align-items: center; gap: 16px; background: linear-gradient(135deg, var(--bg-card), var(--bg-2)); border: 1px solid var(--line-strong); border-radius: var(--radius-lg); padding: 18px 24px; min-width: 220px; }
+            .eps-score-card .score-num { font-family: var(--font-display); font-style: italic; font-size: 38px; line-height: 1; color: var(--gold); display: flex; align-items: baseline; gap: 4px; }
+            .eps-score-card .score-num small { font-size: 15px; color: var(--text-3); font-weight: 600; font-family: var(--font-body); font-style: normal; }
+            .eps-score-card .score-meta { display: flex; flex-direction: column; gap: 4px; }
+            .eps-score-card .score-stars { color: var(--gold); font-size: 12px; letter-spacing: 2px; }
+            .eps-score-card .score-votes { font-size: 12px; color: var(--text-2); }
+
+            /* ---- Toolbar: sort + filter ---- */
+            .eps-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin: 36px 0 22px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+            .eps-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+            .eps-tab { display: inline-flex; align-items: center; gap: 7px; padding: 9px 17px; border-radius: 999px; border: 1px solid var(--line-strong); background: var(--bg-2); color: var(--text-2); font-size: 12.5px; font-weight: 700; cursor: pointer; transition: all .2s ease; white-space: nowrap; }
+            .eps-tab i { font-size: 11px; }
+            .eps-tab:hover { color: var(--text-0); border-color: var(--text-3); }
+            .eps-tab.active { background: var(--accent); border-color: var(--accent); color: #14110a; box-shadow: 0 4px 16px -4px var(--accent-glow); }
+            .eps-count { font-size: 13px; color: var(--text-3); font-weight: 600; }
+
+            /* ---- Top 3 podium (best episodes) ---- */
+            .eps-podium { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 8px; }
+            @media (max-width: 760px) { .eps-podium { grid-template-columns: 1fr; } }
+            .podium-card { position: relative; display: flex; gap: 14px; align-items: center; background: var(--bg-card); border: 1px solid var(--line-strong); border-radius: var(--radius); padding: 16px; cursor: pointer; transition: transform .25s ease, border-color .25s ease; overflow: hidden; }
+            .podium-card:hover { transform: translateY(-3px); border-color: var(--gold); }
+            .podium-card::before { content: ""; position: absolute; inset: 0; opacity: .1; background: radial-gradient(circle at 0% 0%, var(--gold), transparent 60%); pointer-events: none; }
+            .podium-rank { font-family: var(--font-display); font-style: italic; font-size: 28px; color: var(--text-3); width: 38px; flex: none; text-align: center; }
+            .podium-card.rank-1 .podium-rank { color: var(--gold); text-shadow: 0 0 18px rgba(227, 193, 137, .5); }
+            .podium-card.rank-2 .podium-rank { color: #d9d4c9; }
+            .podium-card.rank-3 .podium-rank { color: #b08252; }
+            .podium-thumb { width: 64px; height: 64px; border-radius: 10px; background-size: 400% 200%; background-repeat: no-repeat; flex: none; box-shadow: 0 6px 16px -6px rgba(0,0,0,.7); }
+            .podium-info { min-width: 0; }
+            .podium-info h4 { font-size: 14.5px; color: var(--text-0); font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+            .podium-info .podium-ep-tag { font-size: 11px; color: var(--text-3); font-weight: 700; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 2px; }
+            .podium-info .podium-rating { display: inline-flex; align-items: center; gap: 5px; color: var(--gold); font-size: 13px; font-weight: 800; margin-top: 4px; }
+            .podium-info .podium-rating small { color: var(--text-3); font-weight: 600; }
+
+            /* ---- Episode rank table/list ---- */
+            .eps-list { display: flex; flex-direction: column; gap: 10px; }
+            .eps-row { display: grid; grid-template-columns: 44px 96px 1fr auto; align-items: center; gap: 18px; background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; cursor: pointer; transition: background .2s ease, border-color .2s ease, transform .2s ease; text-decoration: none; }
+            .eps-row:hover { background: var(--bg-3); border-color: var(--line-strong); transform: translateX(2px); }
+            .eps-row-rank { font-family: var(--font-display); font-style: italic; font-size: 18px; color: var(--text-3); text-align: center; }
+            .eps-row.top .eps-row-rank { color: var(--gold); }
+            .eps-row.bottom .eps-row-rank { color: var(--text-3); opacity: .6; }
+            .eps-row-thumb { width: 96px; height: 56px; border-radius: 8px; background-size: 400% 200%; background-repeat: no-repeat; position: relative; flex: none; }
+            .eps-row-thumb .ep-badge-num { position: absolute; bottom: 4px; left: 5px; font-size: 10px; font-weight: 800; background: rgba(0,0,0,.65); color: #f3efe7; padding: 1px 6px; border-radius: 5px; letter-spacing: .5px; }
+            .eps-row-thumb.locked::after { content: "\f023"; font-family: "Font Awesome 6 Free"; font-weight: 900; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,.55); color: var(--text-2); border-radius: 8px; font-size: 14px; }
+            .eps-row-info { min-width: 0; }
+            .eps-row-info h4 { font-size: 15px; color: var(--text-0); font-weight: 700; margin-bottom: 3px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+            .eps-row-info p { font-size: 12.5px; color: var(--text-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 520px; }
+            .eps-pill { font-size: 10px; font-weight: 800; letter-spacing: .4px; text-transform: uppercase; padding: 2px 7px; border-radius: 5px; }
+            .eps-pill.best { background: rgba(227, 193, 137, .15); color: var(--gold); border: 1px solid rgba(227, 193, 137, .35); }
+            .eps-pill.worst { background: rgba(155, 150, 139, .12); color: var(--text-2); border: 1px solid var(--line-strong); }
+            .eps-pill.soon { background: rgba(155, 150, 139, .1); color: var(--text-3); border: 1px solid var(--line); }
+            .eps-row-right { display: flex; align-items: center; gap: 18px; flex: none; }
+            .eps-row-rating { display: flex; flex-direction: column; align-items: flex-end; min-width: 56px; }
+            .eps-row-rating .val { display: flex; align-items: baseline; gap: 4px; font-weight: 700; font-size: 17px; color: var(--gold); font-family: var(--font-display); font-style: italic; }
+            .eps-row-rating .val i { font-size: 12px; }
+            .eps-row-rating .val.no-votes { color: var(--text-3); font-size: 13px; font-family: var(--font-body); font-weight: 600; font-style: normal; }
+            .eps-row-rating .votes { font-size: 10.5px; color: var(--text-3); font-weight: 600; }
+            .eps-row-bar { width: 64px; height: 6px; border-radius: 4px; background: var(--bg-2); overflow: hidden; flex: none; display: none; }
+            @media (min-width: 640px) { .eps-row-bar { display: block; } }
+            .eps-row-bar-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--gold)); border-radius: 4px; }
+            .eps-row-play { width: 38px; height: 38px; border-radius: 50%; background: var(--bg-2); border: 1px solid var(--line-strong); display: flex; align-items: center; justify-content: center; color: var(--text-1); flex: none; transition: all .2s ease; }
+            .eps-row:hover .eps-row-play { background: var(--accent); border-color: var(--accent); color: #14110a; }
+            @media (max-width: 640px) {
+                .eps-row { grid-template-columns: 32px 76px 1fr auto; gap: 12px; padding: 10px 12px; }
+                .eps-row-thumb { width: 76px; height: 44px; }
+                .eps-row-info p { display: none; }
+                .eps-row-right { gap: 10px; }
+            }
+
+            /* ---- Empty / loading states ---- */
+            .eps-skel { height: 78px; border-radius: 14px; background: linear-gradient(90deg, var(--bg-card) 25%, var(--bg-3) 37%, var(--bg-card) 63%); background-size: 400% 100%; animation: epsShimmer 1.4s ease infinite; margin-bottom: 10px; }
+            @keyframes epsShimmer { 0% { background-position: 100% 50%; } 100% { background-position: 0 50%; } }
+
+            .eps-section-title { font-size: 12px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; color: var(--text-2); margin: 32px 0 16px; display: flex; align-items: center; gap: 8px; }
+            .eps-section-title i { color: var(--accent-soft); }
+        </style>
+    </head>
+    <body>
+        <noscript>Bu sayfayı kullanmak için JavaScript'i etkinleştirmeniz gerekiyor.</noscript>
+
+        <nav class="navbar" id="navbar" data-testid="episodes-navbar">
+            <div class="nav-inner">
+                <a href="./index.html" class="logo" data-testid="episodes-logo">
+                    <span class="logo-mark">W</span>
+                    <span class="logo-text">Wext<span class="logo-accent">Flix</span></span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="./index.html" class="nav-link" data-testid="nav-home">Ana Sayfa</a></li>
+                    <li><a href="./index.html#dizi" class="nav-link" data-testid="nav-series">Sikkolik</a></li>
+                    <li><a href="./bolumler.html" class="nav-link active" data-testid="nav-episodes">Bölümler</a></li>
+                    <li><a href="./listem.html" class="nav-link" data-testid="nav-mylist">Listem <span class="list-badge" id="listCountBadge" style="display:none">0</span></a></li>
+                </ul>
+                <div class="nav-actions">
+                    <button class="icon-btn" aria-label="Ara" data-search-trigger><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <div class="avatar">W</div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="eps-page">
+            <div class="eps-head">
+                <div class="eps-head-left">
+                    <div class="eps-eyebrow">Sikkolik: The New Era</div>
+                    <h1>Bölümler &amp; Puanlar</h1>
+                    <p class="eps-sub">Tüm bölümleri izleyici puanına göre sırala, en çok beğenilen ve en çok tartışılan bölümleri keşfet.</p>
+                </div>
+                <div class="eps-score-card" id="seriesScoreCard">
+                    <div class="score-num"><span id="seriesAvg">—</span><small>/10</small></div>
+                    <div class="score-meta">
+                        <div class="score-stars"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i></div>
+                        <div class="score-votes" id="seriesVotes">Henüz oy yok</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top 3 podium -->
+            <div class="eps-section-title" id="podiumTitle" style="display:none"><i class="fa-solid fa-trophy"></i> En İyi 3 Bölüm</div>
+            <div class="eps-podium" id="podium"></div>
+
+            <!-- Toolbar -->
+            <div class="eps-toolbar">
+                <div class="eps-tabs" id="epsTabs">
+                    <button class="eps-tab active" data-sort="order"><i class="fa-solid fa-list-ol"></i> Bölüm Sırası</button>
+                    <button class="eps-tab" data-sort="best"><i class="fa-solid fa-arrow-down-wide-short"></i> En Yüksek Puan</button>
+                    <button class="eps-tab" data-sort="worst"><i class="fa-solid fa-arrow-up-short-wide"></i> En Düşük Puan</button>
+                    <button class="eps-tab" data-sort="voted"><i class="fa-solid fa-users"></i> En Çok Oylanan</button>
+                </div>
+                <div class="eps-count" id="epsCount"></div>
+            </div>
+
+            <div class="eps-list" id="epsList">
+                <div class="eps-skel"></div>
+                <div class="eps-skel"></div>
+                <div class="eps-skel"></div>
+            </div>
+        </main>
+
+        <!-- Search overlay -->
+        <div class="search-overlay" id="searchOverlay" data-testid="search-overlay">
+            <div class="search-panel" role="dialog" aria-modal="true">
+                <div class="search-input-wrap">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Dizi, tür veya karakter ara..." autocomplete="off" />
+                    <button class="search-close" id="searchClose" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="search-hint">Tüm WextFlix kütüphanesinde ara · <kbd>Esc</kbd> ile kapat</div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+        </div>
+
+        <script src="./script.js"></script>
+        <script>
+            (function () {
+                const listEl = document.getElementById("epsList");
+                const countEl = document.getElementById("epsCount");
+                const podiumEl = document.getElementById("podium");
+                const podiumTitleEl = document.getElementById("podiumTitle");
+                const tabsEl = document.getElementById("epsTabs");
+                const seriesAvgEl = document.getElementById("seriesAvg");
+                const seriesVotesEl = document.getElementById("seriesVotes");
+                if (!listEl || typeof EPISODE_PREVIEWS === "undefined") return;
+
+                let currentSort = "order";
+
+                function ratingFor(epNum) {
+                    return (typeof Ratings !== "undefined" && Ratings.getCached(epNum)) || null;
+                }
+
+                function thumbStyle(ep) {
+                    return `background-image:url(${ASSETS.episodeGrid}); background-position:${ep.gridPos}`;
+                }
+
+                function sortedEpisodes() {
+                    const eps = EPISODE_PREVIEWS.map((ep) => ({ ep, r: ratingFor(ep.num) }));
+                    if (currentSort === "order") return eps; // natural order already
+                    if (currentSort === "voted") {
+                        return eps.sort((a, b) => (b.r ? b.r.count : -1) - (a.r ? a.r.count : -1));
+                    }
+                    // best / worst — only rank episodes that have at least one vote;
+                    // unrated episodes are appended at the end in original order.
+                    const rated = eps.filter((x) => x.r && x.r.count > 0);
+                    const unrated = eps.filter((x) => !(x.r && x.r.count > 0));
+                    rated.sort((a, b) => currentSort === "best" ? (b.r.avg - a.r.avg) : (a.r.avg - b.r.avg));
+                    return [...rated, ...unrated];
+                }
+
+                function renderPodium() {
+                    const ratedEps = EPISODE_PREVIEWS
+                        .map((ep) => ({ ep, r: ratingFor(ep.num) }))
+                        .filter((x) => x.r && x.r.count > 0)
+                        .sort((a, b) => b.r.avg - a.r.avg)
+                        .slice(0, 3);
+
+                    if (ratedEps.length === 0) {
+                        podiumEl.innerHTML = "";
+                        podiumTitleEl.style.display = "none";
+                        return;
+                    }
+                    podiumTitleEl.style.display = "";
+                    podiumEl.innerHTML = ratedEps.map(({ ep, r }, i) => `
+                        <a href="./player.html?ep=${ep.num}" class="podium-card rank-${i + 1}" data-testid="podium-${i + 1}">
+                            <div class="podium-rank">#${i + 1}</div>
+                            <div class="podium-thumb" style="${thumbStyle(ep)}"></div>
+                            <div class="podium-info">
+                                <div class="podium-ep-tag">Bölüm ${String(ep.num).padStart(2, "0")}</div>
+                                <h4>${ep.title}</h4>
+                                <div class="podium-rating"><i class="fa-solid fa-star"></i> ${r.avg.toFixed(1)} <small>(${r.count} oy)</small></div>
+                            </div>
+                        </a>
+                    `).join("");
+                }
+
+                function renderList() {
+                    const items = sortedEpisodes();
+                    const ratedCount = EPISODE_PREVIEWS.filter((ep) => { const r = ratingFor(ep.num); return r && r.count > 0; }).length;
+                    countEl.textContent = `${EPISODE_PREVIEWS.length} bölüm · ${ratedCount} puanlanmış`;
+
+                    // Determine best/worst threshold (only when sorting by score and >=2 rated eps)
+                    const ratedSorted = items.filter((x) => x.r && x.r.count > 0);
+                    const bestEpNum = ratedSorted.length ? [...ratedSorted].sort((a, b) => b.r.avg - a.r.avg)[0].ep.num : null;
+                    const worstEpNum = ratedSorted.length > 1 ? [...ratedSorted].sort((a, b) => a.r.avg - b.r.avg)[0].ep.num : null;
+
+                    listEl.innerHTML = items.map(({ ep, r }, idx) => {
+                        const rank = currentSort === "order" ? String(ep.num).padStart(2, "0") : String(idx + 1);
+                        const rankClass = r && ep.num === bestEpNum ? "top" : (r && ep.num === worstEpNum ? "bottom" : "");
+                        const ratingBlock = r && r.count > 0
+                            ? `<div class="eps-row-rating">
+                                   <div class="val"><i class="fa-solid fa-star"></i> ${r.avg.toFixed(1)}</div>
+                                   <div class="votes">${r.count} oy</div>
+                               </div>
+                               <div class="eps-row-bar"><div class="eps-row-bar-fill" style="width:${(r.avg / 10) * 100}%"></div></div>`
+                            : `<div class="eps-row-rating"><div class="val no-votes">Puan yok</div></div>`;
+                        let pill = "";
+                        if (!ep.released) pill += `<span class="eps-pill soon">Yakında</span>`;
+                        if (r && ep.num === bestEpNum && currentSort !== "order") pill += `<span class="eps-pill best"><i class="fa-solid fa-crown"></i> En İyi</span>`;
+                        else if (r && ep.num === worstEpNum && currentSort !== "order") pill += `<span class="eps-pill worst">En Düşük</span>`;
+
+                        return `
+                        <a href="./player.html?ep=${ep.num}" class="eps-row ${rankClass}" data-testid="eps-row-${ep.num}">
+                            <div class="eps-row-rank">${rank}</div>
+                            <div class="eps-row-thumb ${ep.released ? "" : "locked"}" style="${thumbStyle(ep)}">
+                                <span class="ep-badge-num">B${ep.num}</span>
+                            </div>
+                            <div class="eps-row-info">
+                                <h4>${ep.title} ${pill}</h4>
+                                <p>${ep.desc}</p>
+                            </div>
+                            <div class="eps-row-right">
+                                ${ratingBlock}
+                                <div class="eps-row-play"><i class="fa-solid fa-play"></i></div>
+                            </div>
+                        </a>`;
+                    }).join("");
+                }
+
+                function renderSeriesScore() {
+                    const all = EPISODE_PREVIEWS.map((ep) => ratingFor(ep.num)).filter((r) => r && r.count > 0);
+                    if (!all.length) {
+                        seriesAvgEl.textContent = "—";
+                        seriesVotesEl.textContent = "Henüz oy yok";
+                        return;
+                    }
+                    const totalVotes = all.reduce((s, r) => s + r.count, 0);
+                    const weightedAvg = all.reduce((s, r) => s + r.avg * r.count, 0) / totalVotes;
+                    seriesAvgEl.textContent = weightedAvg.toFixed(1);
+                    seriesVotesEl.textContent = `${totalVotes} oy · ${all.length} bölüm puanlandı`;
+                }
+
+                function renderAll() {
+                    renderPodium();
+                    renderList();
+                    renderSeriesScore();
+                }
+
+                tabsEl.addEventListener("click", (e) => {
+                    const btn = e.target.closest(".eps-tab");
+                    if (!btn) return;
+                    [...tabsEl.children].forEach((b) => b.classList.remove("active"));
+                    btn.classList.add("active");
+                    currentSort = btn.dataset.sort;
+                    renderList();
+                });
+
+                // Initial render with whatever is cached, then fetch live data
+                renderAll();
+                if (typeof Ratings !== "undefined") {
+                    Ratings.fetchAll().then(renderAll);
+                }
+
+                bindSearch && bindSearch();
+                bindNavbar && bindNavbar();
+            })();
+        </script>
+    </body>
+</html>

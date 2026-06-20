@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="tr">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#050507" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+        <link rel="stylesheet" href="./style.css" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <title>Sikkolik — Oynatıcı</title>
+        <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
+    </head>
+    <body>
+        <noscript>WextFlix'i kullanmak için JavaScript'i etkinleştirmeniz gerekiyor.</noscript>
+
+        <!-- Glassmorphism Navbar -->
+        <nav class="navbar scrolled" id="navbar" data-testid="player-navbar">
+            <div class="nav-inner">
+                <a href="./index.html" class="logo" data-testid="player-logo">
+                    <span class="logo-mark">W</span>
+                    <span class="logo-text">Wext<span class="logo-accent">Flix</span></span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="./index.html" class="nav-link" data-testid="player-nav-home">Ana Sayfa</a></li>
+                    <li><a href="./index.html#dizi" class="nav-link" data-testid="player-nav-series">Sikkolik</a></li>
+                    <li><a href="./bolumler.html" class="nav-link" data-testid="player-nav-episodes">Bölümler</a></li>
+                    <li><a href="./listem.html" class="nav-link" data-testid="player-nav-mylist">Listem</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <button class="icon-btn" aria-label="Ara" data-search-trigger data-testid="player-search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <button class="icon-btn" aria-label="Bildirimler" data-testid="player-notif-btn"><i class="fa-solid fa-bell"></i></button>
+                    <div class="avatar" data-testid="player-user-avatar">W</div>
+                </div>
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Menü" data-testid="player-mobile-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+
+        <main class="player-page">
+            <div class="player-grid">
+                <!-- Main Player Column -->
+                <div class="player-main">
+                    <div class="player-frame" data-testid="player-frame">
+                        <video
+                            id="playerVideo"
+                            data-testid="player-video"
+                            preload="metadata"
+                            poster=""
+                            playsinline
+                        >
+                            <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
+                        </video>
+                        <div class="player-poster" id="playerPoster" style="background-image:url('https://customer-assets.emergentagent.com/job_cinema-connect-49/artifacts/qv7cqj7u_ChatGPT%20Image%2015%20Haz%202026%2020_54_03.png')"></div>
+                        <button class="center-play" id="centerPlay" aria-label="Oynat" data-testid="center-play">
+                            <i class="fa-solid fa-play"></i>
+                        </button>
+                        <div class="player-controls">
+                            <div class="progress-row">
+                                <span id="timeCurrent">0:00</span>
+                                <div class="progress-bar" id="progressBar" data-testid="progress-bar">
+                                    <div class="progress-fill" id="progressFill" style="width:0%"></div>
+                                </div>
+                                <span id="timeTotal">0:00</span>
+                            </div>
+                            <div class="controls-row">
+                                <button class="ctrl-btn play-big" id="playToggle" aria-label="Oynat/Duraklat" data-testid="play-toggle">
+                                    <i class="fa-solid fa-play"></i>
+                                </button>
+                                <button class="ctrl-btn" aria-label="10 sn geri" data-testid="rewind-btn"><i class="fa-solid fa-rotate-left"></i></button>
+                                <button class="ctrl-btn" aria-label="10 sn ileri" data-testid="forward-btn"><i class="fa-solid fa-rotate-right"></i></button>
+                                <button class="ctrl-btn" id="muteToggle" aria-label="Ses" data-testid="mute-toggle"><i class="fa-solid fa-volume-high"></i></button>
+                                <div class="ctrl-spacer"></div>
+                                <button class="ctrl-btn" aria-label="Altyazı" data-testid="cc-btn"><i class="fa-solid fa-closed-captioning"></i></button>
+                                <button class="ctrl-btn" aria-label="Kalite" data-testid="quality-btn"><i class="fa-solid fa-gear"></i></button>
+                                <button class="ctrl-btn" id="fsToggle" aria-label="Tam ekran" data-testid="fullscreen-btn"><i class="fa-solid fa-expand"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Series Information Panel -->
+                    <section class="series-info" data-testid="series-info">
+                        <h1 id="playerTitle">Sikkolik: The New Era</h1>
+                        <div class="info-meta">
+                            <span class="meta-tag rating" id="epRatingTag" style="display:none"><i class="fa-solid fa-star"></i> <span id="epRatingValue">—</span> <span id="epRatingCount" style="opacity:.7;font-weight:500;margin-left:4px"></span></span>
+                            <span class="meta-tag">2026</span>
+                            <span class="meta-tag">1. Sezon · 8 Bölüm</span>
+                            <span class="meta-tag">HDR · 4K · Dolby Atmos</span>
+                            <span class="meta-tag">Suç · Dram · Gerilim</span>
+                        </div>
+
+                        <!-- User rating widget -->
+                        <div class="rate-box" id="rateBox" data-testid="rate-box">
+                            <div class="rate-label">Bu bölümü puanla:</div>
+                            <div class="rate-stars" id="rateStars"></div>
+                            <div class="rate-status" id="rateStatus"></div>
+                        </div>
+
+                        <p>
+                            Tunahan ve Alp — iki yakın arkadaş, büyük parayı kovalarken her gece daha karanlık bir sokağa düşer. Uyuşturucu, borç, ihanet… Para hep bir adım önde, hep ulaşamadıkları yerde. Bir yandan Apo Abi ve eniştesinin etrafındaki gizem büyür: kim kimin için çalışıyor, kimse bilmiyor. Sonunda anlarlar ki parayı asla bulamayacaklar — ama parayı kovalayan, kendini kaybeder.
+                        </p>
+                        <div class="info-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">Başrol</div>
+                                <div class="stat-value">Tunahan, Alp</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Yan Roller</div>
+                                <div class="stat-value">Apo Abi, Enişte</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Yapım</div>
+                                <div class="stat-value">WextFlix Original</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Dil</div>
+                                <div class="stat-value">Türkçe · İngilizce</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Episode Selector -->
+                    <section class="episodes-section" data-testid="episodes-section">
+                        <div class="episodes-head">
+                            <h3>Bölümler</h3>
+                            <select class="season-select" data-testid="season-select">
+                                <option>1. Sezon</option>
+                                <option>2. Sezon</option>
+                                <option>3. Sezon</option>
+                                <option>4. Sezon</option>
+                            </select>
+                        </div>
+                        <div class="episodes-list" id="episodesList" data-testid="episodes-list"></div>
+                    </section>
+                </div>
+
+                <!-- Sidebar -->
+                <aside class="player-sidebar" data-testid="player-sidebar">
+                    <h3 class="sidebar-title"><i class="fa-solid fa-fire" style="color:var(--red)"></i> Önerilenler</h3>
+                    <div class="recommendations" id="recList"></div>
+                </aside>
+            </div>
+        </main>
+
+        <!-- Search Overlay -->
+        <div class="search-overlay" id="searchOverlay" data-testid="player-search-overlay">
+            <div class="search-panel" role="dialog" aria-modal="true">
+                <div class="search-input-wrap">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="search-input"
+                        placeholder="Dizi, tür veya karakter ara..."
+                        autocomplete="off"
+                        data-testid="player-search-input"
+                    />
+                    <button class="search-close" id="searchClose" aria-label="Kapat" data-testid="player-search-close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="search-hint">Tüm WextFlix kütüphanesinde ara · <kbd>Esc</kbd> ile kapat</div>
+                <div class="search-results" id="searchResults" data-testid="player-search-results"></div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer" data-testid="player-footer">
+            <div class="footer-grid">
+                <div class="footer-col footer-brand">
+                    <a href="./index.html" class="logo">
+                        <span class="logo-mark">W</span>
+                        <span class="logo-text">Wext<span class="logo-accent">Flix</span></span>
+                    </a>
+                    <p class="footer-desc">Sınırsız dizi, sinematik kalite. Her gece yeni bir hikaye. WextFlix ile akışın tam ortasında ol.</p>
+                    <div class="socials">
+                        <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#" aria-label="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="#" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Keşfet</h4>
+                    <ul>
+                        <li><a href="./index.html">Ana Sayfa</a></li>
+                        <li><a href="./index.html#diziler">Diziler</a></li>
+                        <li><a href="./index.html#yeni">Yeni Çıkanlar</a></li>
+                        <li><a href="./index.html#populer">Popüler</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Hesap</h4>
+                    <ul>
+                        <li><a href="#">Profilim</a></li>
+                        <li><a href="#">Listem</a></li>
+                        <li><a href="#">Abonelik</a></li>
+                        <li><a href="#">Ayarlar</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Destek</h4>
+                    <ul>
+                        <li><a href="#">Yardım Merkezi</a></li>
+                        <li><a href="#">İletişim</a></li>
+                        <li><a href="#">Gizlilik</a></li>
+                        <li><a href="#">Kullanım Şartları</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 WextFlix. Tüm hakları saklıdır.</p>
+                <p class="footer-small">Premium yayın deneyimi · 4K HDR · Dolby Atmos</p>
+            </div>
+        </footer>
+
+
+        <script src="./script.js"></script>
+    </body>
+</html>

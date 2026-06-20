@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="tr">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#050507" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+        <link rel="stylesheet" href="./style.css" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <title>Listem — Sikkolik</title>
+        <style>
+            .mylist-page { padding: 118px 64px 80px; min-height: 100vh; }
+            .mylist-page h1 { font-family: var(--font-display); font-style: italic; font-size: 40px; font-weight: 600; margin-bottom: 10px; color: var(--text-0); letter-spacing: -0.6px; }
+            .mylist-page .subtitle { color: var(--text-2); margin-bottom: 34px; font-size: 14px; }
+            .mylist-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 22px; }
+            .mylist-empty { text-align: center; padding: 90px 20px; color: var(--text-2); }
+            .mylist-empty i { font-size: 44px; color: var(--accent-soft); margin-bottom: 18px; display: block; }
+            .mylist-empty h2 { color: var(--text-0); font-family: var(--font-display); font-style: italic; font-weight: 600; font-size: 24px; margin-bottom: 10px; }
+            .mylist-empty a { color: var(--accent-soft); text-decoration: none; font-weight: 600; }
+            @media (max-width: 760px) { .mylist-page { padding: 96px 20px 60px; } }
+        </style>
+    </head>
+    <body>
+        <noscript>Listem'i kullanmak için JavaScript'i etkinleştirmeniz gerekiyor.</noscript>
+
+        <nav class="navbar" id="navbar" data-testid="mylist-navbar">
+            <div class="nav-inner">
+                <a href="./index.html" class="logo" data-testid="mylist-logo">
+                    <span class="logo-mark">W</span>
+                    <span class="logo-text">Wext<span class="logo-accent">Flix</span></span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="./index.html" class="nav-link" data-testid="nav-home">Ana Sayfa</a></li>
+                    <li><a href="./index.html#dizi" class="nav-link" data-testid="nav-series">Sikkolik</a></li>
+                    <li><a href="./bolumler.html" class="nav-link" data-testid="nav-episodes">Bölümler</a></li>
+                    <li><a href="./listem.html" class="nav-link active" data-testid="nav-mylist">Listem <span class="list-badge" id="listCountBadge" style="display:none">0</span></a></li>
+                </ul>
+                <div class="nav-actions">
+                    <button class="icon-btn" aria-label="Ara" data-search-trigger><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <div class="avatar">W</div>
+                </div>
+            </div>
+        </nav>
+
+        <main class="mylist-page">
+            <h1>Listem</h1>
+            <p class="subtitle" id="mylistSubtitle">Kaydettiğin diziler burada.</p>
+            <div id="mylistGrid" class="mylist-grid"></div>
+        </main>
+
+        <!-- Search overlay (reuses script.js search bindings) -->
+        <div class="search-overlay" id="searchOverlay" data-testid="search-overlay">
+            <div class="search-panel" role="dialog" aria-modal="true">
+                <div class="search-input-wrap">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Dizi, tür veya karakter ara..." autocomplete="off" />
+                    <button class="search-close" id="searchClose" aria-label="Kapat"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="search-hint">Tüm WextFlix kütüphanesinde ara · <kbd>Esc</kbd> ile kapat</div>
+                <div class="search-results" id="searchResults"></div>
+            </div>
+        </div>
+
+        <script src="./script.js"></script>
+        <script>
+            // Render My List grid using shared helpers from script.js
+            (function () {
+                const grid = document.getElementById("mylistGrid");
+                const subtitle = document.getElementById("mylistSubtitle");
+                if (!grid || typeof MyList === "undefined") return;
+
+                function render() {
+                    const ids = MyList.all();
+                    const items = ids
+                        .map((id) => ALL_ITEMS_BY_ID[id])
+                        .filter(Boolean);
+
+                    if (items.length === 0) {
+                        subtitle.style.display = "none";
+                        grid.outerHTML = `
+                            <div class="mylist-empty">
+                                <i class="fa-regular fa-bookmark"></i>
+                                <h2>Listen henüz boş</h2>
+                                <p>Bir karta tıklayıp "Listeme Ekle"ye dokunarak başlayabilirsin.</p>
+                                <p style="margin-top:16px"><a href="./index.html">Ana sayfaya dön</a></p>
+                            </div>`;
+                        return;
+                    }
+                    subtitle.textContent = `${items.length} kayıtlı dizi`;
+                    grid.innerHTML = items.map((item) => buildCard(item)).join("");
+                }
+
+                render();
+                bindSearch && bindSearch();
+                bindNavbar && bindNavbar();
+                // Re-render when list changes elsewhere in the page
+                window.addEventListener("storage", (e) => {
+                    if (e.key === "wextflix:mylist") {
+                        MyList._set = null;
+                        render();
+                    }
+                });
+                // Listen for in-page toggles via script.js card-list buttons
+                document.addEventListener("click", (e) => {
+                    const t = e.target.closest("[data-list-toggle]");
+                    if (t) setTimeout(render, 0);
+                });
+            })();
+        </script>
+    </body>
+</html>

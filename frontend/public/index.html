@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="tr">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#050507" />
+        <meta name="description" content="WextFlix - Premium dizi izleme platformu" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+        <link rel="stylesheet" href="./style.css" />
+        <link rel="icon" type="image/png" href="/favicon.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <title>Sikkolik — WextFlix</title>
+        <script>window.addEventListener("error",function(e){if(e.error instanceof DOMException&&e.error.name==="DataCloneError"&&e.message&&e.message.includes("PerformanceServerTiming")){e.stopImmediatePropagation();e.preventDefault()}},true);</script>
+    </head>
+    <body>
+        <noscript>WextFlix'i kullanmak için JavaScript'i etkinleştirmeniz gerekiyor.</noscript>
+
+        <!-- Glassmorphism Navbar -->
+        <nav class="navbar" id="navbar" data-testid="main-navbar">
+            <div class="nav-inner">
+                <a href="./index.html" class="logo" data-testid="logo-link">
+                    <span class="logo-mark">W</span>
+                    <span class="logo-text">Wext<span class="logo-accent">Flix</span></span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#anasayfa" class="nav-link active" data-testid="nav-home">Ana Sayfa</a></li>
+                    <li><a href="#dizi" class="nav-link" data-testid="nav-series">Sikkolik</a></li>
+                    <li><a href="./bolumler.html" class="nav-link" data-testid="nav-episodes">Bölümler</a></li>
+                    <li><a href="./listem.html" class="nav-link" data-testid="nav-mylist">Listem <span class="list-badge" id="listCountBadge" style="display:none">0</span></a></li>
+                </ul>
+                <div class="nav-actions">
+                    <button class="icon-btn" aria-label="Ara" data-search-trigger data-testid="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
+                    <button class="icon-btn" aria-label="Bildirimler" data-testid="notif-btn"><i class="fa-solid fa-bell"></i></button>
+                    <div class="avatar" data-testid="user-avatar">W</div>
+                </div>
+                <button class="mobile-toggle" id="mobileToggle" aria-label="Menü" data-testid="mobile-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Hero Banner -->
+        <section class="hero" id="hero" data-testid="hero-section">
+            <div class="hero-bg" id="heroBg"></div>
+            <div class="hero-overlay"></div>
+            <div class="hero-content">
+                <div class="hero-badge" id="heroBadge"><span class="pulse"></span> 1. BÖLÜM YAYINDA</div>
+                <h1 class="hero-title" id="heroTitle" style="display:none"></h1>
+                <p class="hero-tagline" id="heroTagline">"Parayı kovaladılar. Asla bulamayacaklar."</p>
+                <div class="hero-meta">
+                    <span class="meta-tag rating"><i class="fa-solid fa-star"></i> <span id="heroRating">9.8</span></span>
+                    <span class="meta-tag" id="heroYear">2026</span>
+                    <span class="meta-tag" id="heroSeasons">2 Sezon</span>
+                    <span class="meta-tag">HDR · 4K</span>
+                    <span class="meta-tag" id="heroGenre">Suç · Dram · Gerilim</span>
+                </div>
+                <p class="hero-desc" id="heroDesc">
+                    Tunahan ve Alp — iki yakın arkadaş, büyük parayı kovalarken her gece daha karanlık bir sokağa düşer. Para hep bir adım önde, hep ulaşamadıkları yerde. Sonunda anlarlar ki parayı asla bulamayacaklar — ama parayı kovalayan, kendini kaybeder.
+                </p>
+                <div class="hero-actions" id="heroActions">
+                    <a href="./player.html?ep=1" class="btn btn-primary" data-testid="hero-play-btn">
+                        <i class="fa-solid fa-play"></i> İzle
+                    </a>
+                    <button class="btn btn-ghost" data-testid="hero-info-btn-2" id="heroInfoBtn">
+                        <i class="fa-solid fa-circle-info"></i> Daha Fazla Bilgi
+                    </button>
+                </div>
+            </div>
+            <div class="hero-bottom-fade"></div>
+        </section>
+
+        <!-- Continue Watching -->
+        <section class="row" id="devam" data-testid="row-continue">
+            <div class="row-header">
+                <h2 class="row-title">İzlemeye Devam Et</h2>
+            </div>
+            <div class="row-rail" data-rail="continue">
+                <button class="rail-nav left" aria-label="Sol" data-rail-prev><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="rail-track" id="rail-continue"></div>
+                <button class="rail-nav right" aria-label="Sağ" data-rail-next><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+        <!-- My List (only shown when populated) -->
+        <section class="row" id="section-mylist" data-testid="row-mylist" style="display:none">
+            <div class="row-header">
+                <h2 class="row-title">Listem <i class="fa-solid fa-bookmark" style="color:var(--accent-soft); font-size:18px"></i></h2>
+            </div>
+            <div class="row-rail">
+                <button class="rail-nav left" data-rail-prev><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="rail-track" id="rail-mylist"></div>
+                <button class="rail-nav right" data-rail-next><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+        <!-- WEXTFLIX ORIGINALS -->
+        <section class="row" id="dizi" data-testid="row-originals">
+            <div class="row-header">
+                <h2 class="row-title">WextFlix Originals <span class="row-accent">ORIGINAL</span></h2>
+            </div>
+            <div class="row-rail">
+                <button class="rail-nav left" data-rail-prev><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="rail-track" id="rail-originals"></div>
+                <button class="rail-nav right" data-rail-next><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+        <!-- COMING SOON -->
+        <section class="row" id="yakinda" data-testid="row-coming-soon">
+            <div class="row-header">
+                <h2 class="row-title">Yakında Gelecekler <i class="fa-regular fa-clock" style="color:var(--accent-soft); font-size:18px"></i></h2>
+            </div>
+            <div class="row-rail">
+                <button class="rail-nav left" data-rail-prev><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="rail-track" id="rail-coming-soon"></div>
+                <button class="rail-nav right" data-rail-next><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+        <!-- EPISODE PREVIEWS -->
+        <section class="row row-eps" id="bolumler" data-testid="row-episodes">
+            <div class="row-header">
+                <h2 class="row-title">Bölüm Önizlemeleri</h2>
+                <a href="./bolumler.html" class="row-link" data-testid="row-episodes-viewall">
+                    Puanlara Göre Sırala <i class="fa-solid fa-arrow-right" style="font-size:11px"></i>
+                </a>
+            </div>
+            <div class="row-rail">
+                <button class="rail-nav left" data-rail-prev><i class="fa-solid fa-chevron-left"></i></button>
+                <div class="rail-track" id="rail-episodes"></div>
+                <button class="rail-nav right" data-rail-next><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer" data-testid="footer">
+            <div class="footer-grid">
+                <div class="footer-col footer-brand">
+                    <a href="./index.html" class="logo">
+                        <span class="logo-mark">W</span>
+                        <span class="logo-text">Wext<span class="logo-accent">Flix</span></span>
+                    </a>
+                    <p class="footer-desc">Sınırsız dizi, sinematik kalite. Her gece yeni bir hikaye. WextFlix ile akışın tam ortasında ol.</p>
+                    <div class="socials">
+                        <a href="#" aria-label="Twitter" data-testid="social-twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                        <a href="#" aria-label="Instagram" data-testid="social-instagram"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" aria-label="YouTube" data-testid="social-youtube"><i class="fa-brands fa-youtube"></i></a>
+                        <a href="#" aria-label="TikTok" data-testid="social-tiktok"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="#" aria-label="Discord" data-testid="social-discord"><i class="fa-brands fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>Keşfet</h4>
+                    <ul>
+                        <li><a href="#anasayfa">Ana Sayfa</a></li>
+                        <li><a href="#dizi">Sikkolik</a></li>
+                        <li><a href="#bolumler">Bölümler</a></li>
+                        <li><a href="#yakinda">Yakında</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Hesap</h4>
+                    <ul>
+                        <li><a href="#">Profilim</a></li>
+                        <li><a href="#">Listem</a></li>
+                        <li><a href="#">Abonelik</a></li>
+                        <li><a href="#">Ayarlar</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Destek</h4>
+                    <ul>
+                        <li><a href="#">Yardım Merkezi</a></li>
+                        <li><a href="#">İletişim</a></li>
+                        <li><a href="#">Gizlilik</a></li>
+                        <li><a href="#">Kullanım Şartları</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 WextFlix. Tüm hakları saklıdır.</p>
+                <p class="footer-small">Premium yayın deneyimi · 4K HDR · Dolby Atmos</p>
+            </div>
+        </footer>
+
+        <!-- Search Overlay -->
+        <div class="search-overlay" id="searchOverlay" data-testid="search-overlay">
+            <div class="search-panel" role="dialog" aria-modal="true">
+                <div class="search-input-wrap">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input
+                        type="text"
+                        id="searchInput"
+                        class="search-input"
+                        placeholder="Dizi, tür veya karakter ara..."
+                        autocomplete="off"
+                        data-testid="search-input"
+                    />
+                    <button class="search-close" id="searchClose" aria-label="Kapat" data-testid="search-close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="search-hint">
+                    Tüm WextFlix kütüphanesinde ara · <kbd>Esc</kbd> ile kapat
+                </div>
+                <div class="search-results" id="searchResults" data-testid="search-results"></div>
+            </div>
+        </div>
+
+        <!-- Detail Modal -->
+        <div class="modal-backdrop" id="detailModal" data-testid="detail-modal">
+            <div class="modal" role="dialog" aria-modal="true">
+                <button class="modal-close" id="modalClose" aria-label="Kapat" data-testid="modal-close">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+                <div class="modal-hero" id="modalHero">
+                    <div class="modal-hero-overlay">
+                        <div class="modal-badge" id="modalBadge">WEXTFLIX ORIGINAL</div>
+                        <h1 class="modal-title" id="modalTitle">Sikkolik: The New Era</h1>
+                        <p class="modal-tagline" id="modalTagline">"Parayı kovaladılar. Asla bulamayacaklar."</p>
+                        <div class="modal-actions" id="modalActions">
+                            <button class="btn btn-locked" data-testid="modal-soon-btn">
+                                <i class="fa-solid fa-lock"></i> Çok Yakında
+                            </button>
+                            <button class="btn btn-icon" aria-label="Listeme Ekle" data-testid="modal-add-btn"><i class="fa-solid fa-plus"></i></button>
+                            <button class="btn btn-icon" aria-label="Beğen" data-testid="modal-like-btn"><i class="fa-regular fa-heart"></i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <div class="modal-meta-row" id="modalMetaRow">
+                            <span class="modal-match" id="modalMatch">%98 eşleşme</span>
+                            <span id="modalYear">2026</span>
+                            <span class="modal-age" id="modalAge">18+</span>
+                            <span id="modalSeasons">2 Sezon</span>
+                        </div>
+                        <p class="modal-desc" id="modalDesc">
+                            Tunahan ve Alp — iki yakın arkadaş, büyük parayı kovalarken her gece daha karanlık bir sokağa düşer. Uyuşturucu, borç, ihanet… Para hep bir adım önde, hep ulaşamadıkları yerde. Bir yandan Apo Abi ve eniştesinin etrafındaki gizem büyür: kim kimin için çalışıyor, kimse bilmiyor. Sonunda anlarlar ki parayı asla bulamayacaklar — ama parayı kovalayan, kendini kaybeder.
+                        </p>
+                        <div class="modal-status" id="modalStatus">
+                            <i class="fa-solid fa-check"></i>
+                            <span>2 sezon kesinleşti. Çekimler başlıyor.</span>
+                        </div>
+                    </div>
+                    <div class="modal-info-list" id="modalInfoList">
+                        <div class="info-row">
+                            <span class="info-label">Oyuncular:</span>
+                            <span class="info-value" id="modalCast">Tunahan, Alp, Apo Abi, Enişte</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Türler:</span>
+                            <span class="info-tag" id="modalGenres">Suç, Dram, Gerilim</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Yapım:</span>
+                            <span class="info-value">WextFlix Original</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-section" id="modalCharacterSection">
+                    <h3 class="modal-section-title">Karakterler</h3>
+                    <div class="character-grid" id="characterGrid"></div>
+                </div>
+            </div>
+        </div>
+
+
+        <script src="./script.js"></script>
+    </body>
+</html>
